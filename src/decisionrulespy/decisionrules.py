@@ -1,26 +1,17 @@
 import requests
 import json
 
-def solver(ruleId, body, token, geoloc="eu1", version=""):
+def solver(**kwargs):
 
-    if(ruleId != None or ruleId == ""):
-        raise Exception("RuleID is mandatory argument")
+    endpoint = "http://{kwargs.get('geoloc')}.api.decisionrules.io/rule/solve/" if ('geoloc' in kwargs) else 'http://api.decisionrules.io/rule/solve/'
 
-    if(body != None or body == ""):
-        raise Exception("Body is mandatory argument")
+    if 'version' in kwargs:
+        endpoint += f"{kwargs.get('ruleId')}/{kwargs.get('version')}"
+    else:
+         endpoint += f"{kwargs.get('ruleId')}"
 
-    if(token != None or token == ""):
-        raise Exception("API Token is mandatory argument")
+    header = {"Authorization": f"Bearer {kwargs.get('token')}"}
 
-    endpoint = ""
-
-    if(version != ""):
-        endpoint = f"http://{geoloc}.api.decisionrules.io/rule/solve/{ruleId}/{version}"
-
-    endpoint = f"http://{geoloc}.api.decisionrules.io/rule/solve/{ruleId}"
-
-    header = {"Authorization": f"Bearer {token}"}
-
-    response = requests.post(url=endpoint, json=body, headers=header)
+    response = requests.post(url=endpoint, json=kwargs.get('body'), headers=header)
 
     return response.json()
