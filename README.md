@@ -36,7 +36,7 @@ body={"data":{"my_super_input": "super_input"}}
 version="1"
 geoloc="eu1"
 
-result = decisionrules.solver(ruleId=ruleId, token=token, body=body)
+result = decisionrules.solver(ruleId=ruleId, token=token, body=body, geoloc="eu1", version="1")
 
 ````
 
