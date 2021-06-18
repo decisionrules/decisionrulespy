@@ -9,8 +9,8 @@ You can create your API key here: https://app.decisionrules.io/api-keys
 # Supported kwargs
 
 - ruleId: string
-- token: string
-- body: dics
+- api_key: string
+- input_data: dics
 - version: string
 - geoloc: string
 
@@ -28,16 +28,18 @@ We offer these values:
 # Simple usage demo
 
 ````python
-import decisionrulespy.decisionrules as decisionrules
+import decisionrules
 
-ruleId="1234abcd"
-token="asdf5678"
-body={"data":{"my_super_input": "super_input"}}
-version="1"
-geoloc="eu1"
+decisionrules.init("API_KEY_HERE", "GEOLOCATION_HERE")
 
-result = decisionrules.solver(ruleId=ruleId, token=token, body=body, geoloc="eu1", version="1")
+input_data = {"data": {"day": "today"}}
 
+resp1 = decisionrules.solver("RULE_ID_HERE", input_data, "VERSION_HERE")
+
+resp2 = decisionrules.solver("RULE_ID_HERE", input_data)
+
+print(resp1)
+print(resp2[0]['result'])
 ````
 
 # Dependencies
