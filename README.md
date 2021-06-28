@@ -1,24 +1,25 @@
 # DecisionRulespy
 
-Simple python library that allows you to easily connect to [Decisionrules.io](https://decisionrules.io) from your python application.
+Simple async python library that allows you to easily connect to [Decisionrules.io](https://decisionrules.io) from your python application.
 
 # Where do i get api key?
 
 You can create your API key here: https://app.decisionrules.io/api-keys
 
-# Supported kwargs
+# Arguments
 
-- ruleId: string
-- api_key: string
-- input_data: dics
-- version: string
-- geoloc: string
+* apiKey - apikey (string)
+* GeoLocation - enum of possible [geoLocations](https://docs.decisionrules.io/docs/api/geo-location) (optional argument)
+* ruleId - id of the rule from dashboard (string)
+* data - request object. Omit data object. f.e {data:{myreq: something}} - WRONG, {myreq: something} - GOOD 
+* SolverStrategy - enum of possible [solver strategies](https://docs.decisionrules.io/docs/other/execution-strategy)
+* version - version of the rule. optional argument
 
-Version and Geo location are optional parameters. If you left out version then you will automaticaly get result of your latest version deployed on DecisionRules dashboard.
+If you omit version then you will automaticaly get result of your latest version deployed on DecisionRules dashboard.
 
-If you omit geo location your request will be computed on EU1 (Ireland).
+If you omit geo location your request will be computed on default server in Europe.
 
-We offer these values:
+We offer these geoLocs:
 
 - eu1: Ireland
 - eu2: Sweden
@@ -29,17 +30,25 @@ We offer these values:
 
 ````python
 import decisionrules
+import asyncio
 
-decisionrules.init("API_KEY_HERE", "GEOLOCATION_HERE")
+apikey = "API_KEY_HERE"
+geoLoc = decisionrules.enums.GeoLocations.US2
+solver_strategy = decisionrules.SolverStrategies.STANDARD
 
-input_data = {"data": {"day": "today"}}
+decisionrules.init(apikey, geoLoc)
 
-resp1 = decisionrules.solver("RULE_ID_HERE", input_data, "VERSION_HERE")
+data = {"day": "today"}
 
-resp2 = decisionrules.solver("RULE_ID_HERE", input_data)
 
-print(resp1)
-print(resp2[0]['result'])
+async def getResult(data):
+    result = await decisionrules.solver("RULE_ID_HERE", data, solver_strategy)
+    print(result[0]["result"])
+
+
+loop = asyncio.get_event_loop()
+
+loop.run_until_complete(getResult(data))
 ````
 
 # Dependencies

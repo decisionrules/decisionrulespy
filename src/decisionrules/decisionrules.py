@@ -1,26 +1,27 @@
 import requests
 from .exceptions import *
+from .enums import *
 
 _api_key = None
 _geo_location = None
 
 
-def init(api_key, geo_location=None):
+def init(api_key, geo_location=GeoLocations.DEFAULT):
     global _api_key
     _api_key = api_key
     global _geo_location
     _geo_location = geo_location
 
 
-def solver(rule_id, input_data, version=None):
+async def solver(rule_id, input_data, solverStrategy, version=None):
     endpoint = url_factory(rule_id, version)
 
-    header = {"Authorization": f"Bearer {_api_key}"}
+    header = header_factory(_api_key, solverStrategy)
 
     response = None
 
     try:
-        response = requests.post(url=endpoint, json=input_data, headers=header)
+        response = requests.post(url=endpoint, json=requestParser(input_data), headers=header)
 
         validate_response(response.status_code)
     except NoUserException:
@@ -45,16 +46,17 @@ def solver(rule_id, input_data, version=None):
 def url_factory(rule_id, version):
     url = None
 
-    if _geo_location is not None:
-        url = f"https://{_geo_location}.api.decisionrules.io/rule/solve/"
+    if _geo_location is not GeoLocations.DEFAULT:
+        url = f"http://{_geo_location.value}.api.decisionrules.io/rule/solve/"
     else:
-        url = "https://api.decisionrules.io/rule/solve/"
+        url = "http://api.decisionrules.io/rule/solve/"
 
     if version is not None:
         url += f"{rule_id}/{version}"
     else:
         url += rule_id
 
+    print(f"sending request to: {url}")
     return url
 
 
@@ -67,3 +69,16 @@ def validate_response(status_code):
         raise NotPublishedException
     elif status_code == 500:
         raise InternalServerError
+
+
+def header_factory(api_key, strategy):
+    if strategy is not SolverStrategies.STANDARD:
+        return {"Authorization": f"Bearer {api_key}"}
+    else:
+        return {"Authorization": f"Bearer {api_key}", "X-Strategy": strategy.value}
+
+
+def requestParser(input):
+    return {
+        "data": input
+    }
