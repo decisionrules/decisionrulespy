@@ -1,27 +1,31 @@
 import requests
 from .exceptions import *
 from .enums import *
+from .custom_domain import *
 
-_api_key = None
-_geo_location = None
+_api_key: str
+_geo_location: GeoLocations
+_custom_domain: CustomDomain
 
 
-def init(api_key, geo_location=GeoLocations.DEFAULT):
+def init(api_key, geo_location=GeoLocations.DEFAULT, custom_domain: CustomDomain = None):
     global _api_key
     _api_key = api_key
     global _geo_location
     _geo_location = geo_location
+    global _custom_domain
+    _custom_domain = custom_domain
 
 
-async def solver(rule_id, input_data, solverStrategy, version=None):
+async def solver(rule_id, input_data, solver_strategy, version=None):
     endpoint = url_factory(rule_id, version)
 
-    header = header_factory(_api_key, solverStrategy)
+    header = header_factory(_api_key, solver_strategy)
 
     response = None
 
     try:
-        response = requests.post(url=endpoint, json=requestParser(input_data), headers=header)
+        response = requests.post(url=endpoint, json=request_parser(input_data), headers=header)
 
         validate_response(response.status_code)
     except NoUserException:
@@ -44,12 +48,14 @@ async def solver(rule_id, input_data, solverStrategy, version=None):
 
 
 def url_factory(rule_id, version):
-    url = None
 
-    if _geo_location is not GeoLocations.DEFAULT:
-        url = f"http://{_geo_location.value}.api.decisionrules.io/rule/solve/"
+    if _custom_domain is not None:
+        url = f"{_custom_domain.custom_domain_protocol.value}://{_custom_domain.custom_domain_url}/rule/solve/"
     else:
-        url = "http://api.decisionrules.io/rule/solve/"
+        if _geo_location is not GeoLocations.DEFAULT:
+            url = f"https://{_geo_location.value}.api.decisionrules.io/rule/solve/"
+        else:
+            url = "https://api.decisionrules.io/rule/solve/"
 
     if version is not None:
         url += f"{rule_id}/{version}"
@@ -78,7 +84,7 @@ def header_factory(api_key, strategy):
         return {"Authorization": f"Bearer {api_key}", "X-Strategy": strategy.value}
 
 
-def requestParser(input):
+def request_parser(data):
     return {
-        "data": input
+        "data": data
     }

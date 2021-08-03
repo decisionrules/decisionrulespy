@@ -13,3 +13,8 @@ class SolverStrategies(enum.Enum):
     STANDARD = "STANDARD"
     ARRAY = "ARRAY"
     FIRST_MATCH = "FIRST_MATCH"
+
+
+class Protocols(enum.Enum):
+    HTTP = "http"
+    HTTPS = "https"
