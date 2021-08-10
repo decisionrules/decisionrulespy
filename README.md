@@ -40,9 +40,7 @@ apikey = "API_KEY_HERE"
 geoLoc = decisionrules.GeoLocations.US2
 solver_strategy = decisionrules.SolverStrategies.STANDARD
 
-customDomain = decisionrules.CustomDomain("custom_url", decisionrules.Protocols.HTTPS)
-
-decisionrules.init(apikey, geoLoc, customDomain)
+decisionrules.init(apikey, geoLoc)
 
 data = {"day": "today"}
 
@@ -56,6 +54,16 @@ loop = asyncio.get_event_loop()
 
 loop.run_until_complete(get_result(data))
 ````
+
+## Custom domain usage
+
+Just create CustomDomain instance that takes string url and Protocols enum value as params and pass to the init function.
+
+```python
+customDomain = decisionrules.CustomDomain("your.domain.com", decisionrules.Protocols.HTTPS)
+
+decisionrules.init(apikey, geoLoc, customDomain)
+```
 
 # Dependencies
 
