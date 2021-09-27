@@ -18,3 +18,8 @@ class SolverStrategies(enum.Enum):
 class Protocols(enum.Enum):
     HTTP = "http"
     HTTPS = "https"
+
+
+class SolverType(enum.Enum):
+    RULE = "rule"
+    COMPOSITION = "composition"

@@ -17,8 +17,8 @@ def init(api_key, geo_location=GeoLocations.DEFAULT, custom_domain: CustomDomain
     _custom_domain = custom_domain
 
 
-async def solver(rule_id, input_data, solver_strategy, version=None):
-    endpoint = url_factory(rule_id, version)
+async def solver(solver_type, rule_id, input_data, solver_strategy, version=None):
+    endpoint = url_factory(solver_type, rule_id, version)
 
     header = header_factory(_api_key, solver_strategy)
 
@@ -47,15 +47,15 @@ async def solver(rule_id, input_data, solver_strategy, version=None):
     return response.json()
 
 
-def url_factory(rule_id, version):
+def url_factory(solver_type, rule_id, version):
 
     if _custom_domain is not None:
-        url = f"{_custom_domain.custom_domain_protocol.value}://{_custom_domain.custom_domain_url}/rule/solve/"
+        url = f"{_custom_domain.custom_domain_protocol.value}://{_custom_domain.custom_domain_url}/{solver_type}/solve/"
     else:
         if _geo_location is not GeoLocations.DEFAULT:
-            url = f"https://{_geo_location.value}.api.decisionrules.io/rule/solve/"
+            url = f"https://{_geo_location.value}.api.decisionrules.io/{solver_type}/solve/"
         else:
-            url = "https://api.decisionrules.io/rule/solve/"
+            url = f"https://api.decisionrules.io/{solver_type}/solve/"
 
     if version is not None:
         url += f"{rule_id}/{version}"
