@@ -53,16 +53,15 @@ def url_factory(solver_type, rule_id, version):
         url = f"{_custom_domain.custom_domain_protocol.value}://{_custom_domain.custom_domain_url}/{solver_type}/solve/"
     else:
         if _geo_location is not GeoLocations.DEFAULT:
-            url = f"https://{_geo_location.value}.api.decisionrules.io/{solver_type}/solve/"
+            url = f"https://{_geo_location.value}.api.decisionrules.io/{solver_type.value}/solve/"
         else:
-            url = f"https://api.decisionrules.io/{solver_type}/solve/"
+            url = f"https://api.decisionrules.io/{solver_type.value}/solve/"
 
     if version is not None:
         url += f"{rule_id}/{version}"
     else:
         url += rule_id
 
-    print(f"sending request to: {url}")
     return url
 
 
