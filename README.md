@@ -1,70 +1,113 @@
-# DecisionRulespy
+# DecisionRulesPy
 
-Simple async python library that allows you to easily connect to [Decisionrules.io](https://decisionrules.io) from your python application.
+A simple library that allows you to easily connect to 
+[DecisionRules.io](https://decisionrules.io) from your application.
 
-# Where do I get api key?
+# Usage
 
-You can create your API key here: https://app.decisionrules.io/api-keys
+* Solver (Rules, Compositions)
+* Management API
 
-# Init arguments
+# 1 - Solver
 
-* apiKey - apikey (string)
-* GeoLocation - enum of possible [geoLocations](https://docs.decisionrules.io/docs/api/geo-location) (optional argument)
-* CustomDomain - if you have on-premise solution you can inject your own server domain name and transfer protocol with this class (if normal DR are used you can omit this)
+Solver is designed for solving rules made in DecisionRules application.
+You can run solver with `decisionrules.solver()` method. Rule ids are accessible in DecisionRules app.
 
-# Arguments
+## 1.1 - Defining solver init
 
-* ruleId - id of the rule from dashboard (string)
-* data - request object. Omit data object. f.e {data:{myreq: something}} - WRONG, {myreq: something} - GOOD 
-* SolverStrategy - enum of possible [solver strategies](https://docs.decisionrules.io/docs/other/execution-strategy)
-* version - version of the rule. optional argument
-
-If you omit version then you will automaticaly get result of your latest version deployed on DecisionRules dashboard.
-
-If you omit geo location your request will be computed on default server in Europe.
-
-We offer these geoLocs:
-
-- eu1: Ireland
-- eu2: Sweden
-- us1: Virginia
-- us2: North California
-
-# Simple usage demo
-
-````python
-import decisionrules
-import asyncio
-
-apikey = "API_KEY_HERE"
-geoLoc = decisionrules.GeoLocations.US2
-solver_strategy = decisionrules.SolverStrategies.STANDARD
-
-decisionrules.init(apikey, geoLoc)
-
-data = {"day": "today"}
-
-
-async def get_result(request):
-    result = await decisionrules.solver("RULE_ID_HERE", request, solver_strategy)
-    print(result[0]["result"])
-
-
-loop = asyncio.get_event_loop()
-
-loop.run_until_complete(get_result(data))
-````
-
-## Custom domain usage
-
-Just create CustomDomain instance that takes string url and Protocols enum value as params and pass to the init function.
+Solver need some data beforehand, like api keys, geolocation etc.
 
 ```python
-customDomain = decisionrules.CustomDomain("your.domain.com", decisionrules.Protocols.HTTPS)
+from decisionrules import *
 
-decisionrules.init(apikey, geoLoc, customDomain)
+async def solver_test():
+    decisionrules.init(api_key, GeoLocations.EU1)
 ```
 
-# Dependencies
+## 1.2 - Defining solver method with data
 
-[Requests](https://pypi.org/project/requests/)
+Solver method expects 5 arguments
+
+* SolverType - enum value - mandatory
+* RuleId - str - mandatory
+* Data - dict or json str - mandatory
+* SolverStrategy - enum value - mandatory
+* Version - str - optional
+
+```python
+async def solver_test():
+    data = {"say": "Hello from python"}
+
+    decisionrules.init(api_key, GeoLocations.EU1)
+    
+    # SolverType enum changes type of solver (Rule or Compostion)
+    response = await decisionrules.solver(decisionrules.SolverType.RULE, get_rule, data, SolverStrategies.STANDARD)
+
+    response2 = await decisionrules.solver(decisionrules.SolverType.COMPOSITION, compo_rule, data, SolverStrategies.STANDARD)
+```
+
+## 1.3 Solver with custom domain
+
+For using custom domain just add `CustomDomain` instance to the `init method` with `url` and `protocol` parameters.
+
+```python
+async def solver_test():
+    data = {"say": "Hello from python"}
+
+    decisionrules.init(api_key, GeoLocations.EU1, CustomDomain("YOUR_URL", Protocols.HTTPS))
+    
+    response = await decisionrules.solver(decisionrules.SolverType.RULE, get_rule, data, SolverStrategies.STANDARD)
+
+    response2 = await decisionrules.solver(decisionrules.SolverType.COMPOSITION, compo_rule, data, SolverStrategies.STANDARD)
+```
+
+# 2 - Management API
+
+Management api is accessible via `dr_management` and required management api key that you can obtain in api key section in DecisionRules app.
+Management api key is defined in custom `dr_management` `init` method.
+
+```python
+async def crud_test():
+    dr_management.init(mng_key)
+```
+
+## 2.1 Management API usage example
+
+```python
+from decisionrules import *
+
+async def crud_test():
+    dr_management.init(mng_key)
+
+    get_rule_resp = await dr_management.get_rule_by_id(get_rule)
+    get_rule_by_version_resp = await dr_management.get_rule_by_id_and_version(get_rule, "1")
+    get_space_resp = await dr_management.get_space(get_space)
+
+    await dr_management.put_rule(put_rule, "1", put_data)
+    await dr_management.post_rule(post_rule, post_data)
+    await dr_management.delete_rule(delete_rule, "1")
+
+```
+
+## 2.3 All available methods in management API
+
+* GetRuleById - Search for single rule by its ID
+* GetRuleByIdAndVersion - Search for single rule by its ID and version
+* GetSpace - Search for space by its ID
+* PostRuleForSpace - Post new rule to the space
+* PutRule - Update existing rule
+* DeleteRule - Delete existing rule
+
+```python
+dr_management.get_rule_by_id(get_rule)
+
+dr_management.get_rule_by_id_and_version(get_rule, "1")
+
+dr_management.get_space(get_space)
+
+dr_management.put_rule(put_rule, "1", put_data)
+
+dr_management.post_rule(post_rule, post_data)
+
+dr_management.delete_rule(delete_rule, "1")
+```

@@ -9,7 +9,7 @@ _custom_domain: CustomDomain
 _header: dict
 
 
-def init(management_api_key, custom_domain: CustomDomain):
+def init(management_api_key, custom_domain: CustomDomain = None):
     global _management_api
     _management_api = management_api_key
     global _custom_domain
@@ -24,12 +24,12 @@ def header_factory(api_key):
 
 def url_factory():
     if _custom_domain is not None:
-        return f"{_custom_domain.custom_domain_protocol.value}://{_custom_domain.custom_domain_url}/api/"
+        return f"{_custom_domain.custom_domain_protocol.value}://{_custom_domain.custom_domain_url}/api"
     else:
-        return "https://api.decisionrules.io/api/"
+        return "https://api.decisionrules.io/api"
 
 
-def get_call(get_url):
+async def get_call(get_url):
     response = None
 
     try:
@@ -52,25 +52,25 @@ def get_call(get_url):
         print(response)
 
 
-def get_rule_by_id(rule_id):
+async def get_rule_by_id(rule_id):
     url = f"{url_factory()}/rule/{rule_id}"
 
-    return get_call(url)
+    return await get_call(url)
 
 
-def get_rule_by_id_and_version(rule_id, version):
+async def get_rule_by_id_and_version(rule_id, version):
     url = f"{url_factory()}/rule/{rule_id}/{version}"
 
-    return get_call(url)
+    return await get_call(url)
 
 
-def get_space(space_id):
+async def get_space(space_id):
     url = f"{url_factory()}/space/{space_id}"
 
-    return get_call(url)
+    return await get_call(url)
 
 
-def post_rule(space_id, data):
+async def post_rule(space_id, data):
     url = f"{url_factory()}/rule/{space_id}"
 
     response = None
@@ -95,14 +95,14 @@ def post_rule(space_id, data):
         print(response)
 
 
-def put_rule(rule_id, version, data):
+async def put_rule(rule_id, version, data):
     url = f"{url_factory()}/rule/{rule_id}/{version}"
 
     response = None
 
     try:
-        response = requests.post(url, json=data, headers=_header)
-        return response.json()
+        response = requests.put(url, json=data, headers=_header)
+        return
     except NoUserException:
         print(f"No valid user! STATUS: {response.status_code}")
         print(response.json())
@@ -120,14 +120,14 @@ def put_rule(rule_id, version, data):
         print(response)
 
 
-def delete_rule(rule_id, version):
+async def delete_rule(rule_id, version):
     url = f"{url_factory()}/rule/{rule_id}/{version}"
 
     response = None
 
     try:
-        response = requests.delete(url, headers=_header)
-        return response.json()
+        requests.delete(url, headers=_header)
+        return
     except NoUserException:
         print(f"No valid user! STATUS: {response.status_code}")
         print(response.json())
