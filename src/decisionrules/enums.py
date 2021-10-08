@@ -22,4 +22,4 @@ class Protocols(enum.Enum):
 
 class SolverType(enum.Enum):
     RULE = "rule"
-    COMPOSITION = "composition"
+    RULE_FLOW = "composition"

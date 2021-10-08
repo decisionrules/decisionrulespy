@@ -43,7 +43,7 @@ async def solver_test():
     # SolverType enum changes type of solver (Rule or Compostion)
     response = await decisionrules.solver(decisionrules.SolverType.RULE, get_rule, data, SolverStrategies.STANDARD)
 
-    response2 = await decisionrules.solver(decisionrules.SolverType.COMPOSITION, compo_rule, data, SolverStrategies.STANDARD)
+    response2 = await decisionrules.solver(decisionrules.SolverType.RULEFLOW, compo_rule, data, SolverStrategies.STANDARD)
 ```
 
 ## 1.3 Solver with custom domain
