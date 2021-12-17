@@ -50,7 +50,7 @@ async def solver(solver_type, rule_id, input_data, solver_strategy, version=None
 def url_factory(solver_type, rule_id, version):
 
     if _custom_domain is not None:
-        url = f"{_custom_domain.custom_domain_protocol.value}://{_custom_domain.custom_domain_url}/{solver_type}/solve/"
+        url = f"{_custom_domain.custom_domain_protocol.value}://{_custom_domain.custom_domain_url}/{solver_type.value}/solve/"
     else:
         if _geo_location is not GeoLocations.DEFAULT:
             url = f"https://{_geo_location.value}.api.decisionrules.io/{solver_type.value}/solve/"
