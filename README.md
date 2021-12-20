@@ -15,13 +15,13 @@ You can run solver with `decisionrules.solver()` method. Rule ids are accessible
 
 ## 1.1 - Defining solver init
 
-Solver need some data beforehand, like api keys, geolocation etc.
+Solver need some data beforehand, like api keys
 
 ```python
 from decisionrules import *
 
 async def solver_test():
-    decisionrules.init(api_key, GeoLocations.EU1)
+    decisionrules.init(api_key)
 ```
 
 ## 1.2 - Defining solver method with data
@@ -38,7 +38,7 @@ Solver method expects 5 arguments
 async def solver_test():
     data = {"say": "Hello from python"}
 
-    decisionrules.init(api_key, GeoLocations.EU1)
+    decisionrules.init(api_key)
     
     # SolverType enum changes type of solver (Rule or Compostion)
     response = await decisionrules.solver(decisionrules.SolverType.RULE, get_rule, data, SolverStrategies.STANDARD)
@@ -54,7 +54,7 @@ For using custom domain just add `CustomDomain` instance to the `init method` wi
 async def solver_test():
     data = {"say": "Hello from python"}
 
-    decisionrules.init(api_key, GeoLocations.EU1, CustomDomain("YOUR_URL", Protocols.HTTPS))
+    decisionrules.init(api_key, CustomDomain("YOUR_URL", Protocols.HTTPS))
     
     response = await decisionrules.solver(decisionrules.SolverType.RULE, get_rule, data, SolverStrategies.STANDARD)
 
