@@ -5,23 +5,22 @@ A simple library that allows you to easily connect to
 
 # Usage
 
-* Solver (Rules, Compositions)
-* Management API
+* Solver (DecisionTables, ScriptRules, RuleFlow)
+* Management API (CRUD operations on DecisionTables and RuleFlows)
 
 # 1 - Solver
 
 Solver is designed for solving rules made in DecisionRules application.
-You can run solver with `decisionrules.solver()` method. Rule ids are accessible in DecisionRules app.
 
 ## 1.1 - Defining solver init
 
-Solver need some data beforehand, like api keys
+Before you start solving rules you need to setup an SolverAPI instance. How to do so is shown below.
 
 ```python
-from decisionrules import *
+import decisionrules
 
 async def solver_test():
-    decisionrules.init(api_key)
+    solver = decisionrules.SolverAPI(solver_api_key)
 ```
 
 ## 1.2 - Defining solver method with data
@@ -38,12 +37,12 @@ Solver method expects 5 arguments
 async def solver_test():
     data = {"say": "Hello from python"}
 
-    decisionrules.init(api_key)
-    
-    # SolverType enum changes type of solver (Rule or Compostion)
-    response = await decisionrules.solver(decisionrules.SolverType.RULE, get_rule, data, SolverStrategies.STANDARD)
+    solver = decisionrules.SolverAPI(api_key)
 
-    response2 = await decisionrules.solver(decisionrules.SolverType.RULEFLOW, compo_rule, data, SolverStrategies.STANDARD)
+    # SolverType enum defines type of solver (Rule or Compostion)
+    response = await solver.solve(decisionrules.SolverType.RULE, get_rule, data, SolverStrategies.STANDARD)
+
+    response2 = await solver.solve(decisionrules.SolverType.RULEFLOW, compo_rule, data, SolverStrategies.STANDARD)
 ```
 
 ## 1.3 Solver with custom domain
@@ -54,21 +53,25 @@ For using custom domain just add `CustomDomain` instance to the `init method` wi
 async def solver_test():
     data = {"say": "Hello from python"}
 
-    decisionrules.init(api_key, CustomDomain("YOUR_URL", Protocols.HTTPS))
+    solver = decisionrules.SolverAPI(api_key, CustomDomain("YOUR_URL", Protocols.HTTPS))
     
-    response = await decisionrules.solver(decisionrules.SolverType.RULE, get_rule, data, SolverStrategies.STANDARD)
+    response = await solver.solve(decisionrules.SolverType.RULE, get_rule, data, SolverStrategies.STANDARD)
 
-    response2 = await decisionrules.solver(decisionrules.SolverType.COMPOSITION, compo_rule, data, SolverStrategies.STANDARD)
+    response2 = await solver.solve(decisionrules.SolverType.RULEFLOW, compo_rule, data, SolverStrategies.STANDARD)
 ```
 
 # 2 - Management API
 
-Management api is accessible via `dr_management` and required management api key that you can obtain in api key section in DecisionRules app.
-Management api key is defined in custom `dr_management` `init` method.
+Management api is accessible via `ManagementApi` and required management api key that you can obtain in api key section in DecisionRules app.
+Data for ruleflow import methods are represented as an array where index0 = RF, and index1...indexn are DTs
 
 ```python
-async def crud_test():
-    dr_management.init(mng_key)
+async def management_api_test():
+    manager = decisionrules.ManagementApi(mng_key)
+
+    #Or with custom domain
+
+    manager = decisionrules.ManagementApi(mng_key, CustomDomain("YOUR_URL", Protocols.HTTPS))
 ```
 
 ## 2.1 Management API usage example
@@ -76,16 +79,27 @@ async def crud_test():
 ```python
 from decisionrules import *
 
-async def crud_test():
-    dr_management.init(mng_key)
+async def management_api_test():
+    manager = decisionrules.ManagementApi(mng_key)
 
-    get_rule_resp = await dr_management.get_rule_by_id(get_rule)
-    get_rule_by_version_resp = await dr_management.get_rule_by_id_and_version(get_rule, "1")
-    get_space_resp = await dr_management.get_space(get_space)
+    await manager.get_rule(get_rule)
+    await manager.get_rule(get_rule, "1")
+    await manager.get_space(get_space)
 
-    await dr_management.put_rule(put_rule, "1", put_data)
-    await dr_management.post_rule(post_rule, post_data)
-    await dr_management.delete_rule(delete_rule, "1")
+    await manager.update_rule(put_rule, "1", put_data)
+    await manager.create_rule(post_rule, post_data)
+    await manager.delete_rule(delete_rule, "1")
+
+    await manager.create_ruleflow(new_ruleflow)
+    await manager.get_ruleflow(id)
+    await manager.get_ruleflow(id, 1)
+    await manager.update_ruleflow(id, 1, ruleflow)
+    await manager.export_ruleflow(id, 1)
+    await manager.export_ruleflow(id)
+    await manager.import_ruleflow([new_ruleflow_with_dt], 1,)
+    await manager.import_ruleflow(id, 1, [new_ruleflow_with_dt])
+    await manager.import_ruleflow([new_ruleflow_with_dt])
+    await manager.delele_ruleflow(id)
 
 ```
 
@@ -97,17 +111,9 @@ async def crud_test():
 * PostRuleForSpace - Post new rule to the space
 * PutRule - Update existing rule
 * DeleteRule - Delete existing rule
-
-```python
-dr_management.get_rule_by_id(get_rule)
-
-dr_management.get_rule_by_id_and_version(get_rule, "1")
-
-dr_management.get_space(get_space)
-
-dr_management.put_rule(put_rule, "1", put_data)
-
-dr_management.post_rule(post_rule, post_data)
-
-dr_management.delete_rule(delete_rule, "1")
-```
+* Create Ruleflow - Creates empty rule flow
+* Get Ruleflow - Returns RuleFlow
+* Update RuleFlow - Updates RuleFlow
+* Import RuleFlow - Imports RuleFlow (as a new RuleFLow, as a new version or replace existing version)
+* Export RuleFlow - Exports RuleFlow
+* Delete RuleFlow - Deletes existing RuleFlow
