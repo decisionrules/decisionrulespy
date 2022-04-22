@@ -3,6 +3,8 @@
 A simple library that allows you to easily connect to 
 [DecisionRules.io](https://decisionrules.io) from your application.
 
+# Instalation
+``` pip install decisionrulespy ```
 # Usage
 
 * Solver (Rules, Compositions)
