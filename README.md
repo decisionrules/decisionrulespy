@@ -1,5 +1,7 @@
 # DecisionRulesPy
 
+VERSION 3 CONTAINS MAJOR CHANGES IN API INTERFACES AND NOW SUPPORTS RULEFLOWS CRUD
+
 A simple library that allows you to easily connect to 
 [DecisionRules.io](https://decisionrules.io) from your application.
 
@@ -40,9 +42,9 @@ async def solver_test():
     solver = decisionrules.SolverAPI(api_key)
 
     # SolverType enum defines type of solver (Rule or Compostion)
-    response = await solver.solve(decisionrules.SolverType.RULE, get_rule, data, SolverStrategies.STANDARD)
+    response = await solver.solve(decisionrules.SolverType.RULE, get_rule, data, decisionrules.SolverStrategies.STANDARD)
 
-    response2 = await solver.solve(decisionrules.SolverType.RULEFLOW, compo_rule, data, SolverStrategies.STANDARD)
+    response2 = await solver.solve(decisionrules.SolverType.RULEFLOW, compo_rule, data, decisionrules.SolverStrategies.STANDARD)
 ```
 
 ## 1.3 Solver with custom domain
@@ -55,14 +57,16 @@ async def solver_test():
 
     solver = decisionrules.SolverAPI(api_key, CustomDomain("YOUR_URL", Protocols.HTTPS))
     
-    response = await solver.solve(decisionrules.SolverType.RULE, get_rule, data, SolverStrategies.STANDARD)
+    response = await solver.solve(decisionrules.SolverType.RULE, get_rule, data, decisionrules.SolverStrategies.STANDARD)
 
-    response2 = await solver.solve(decisionrules.SolverType.RULEFLOW, compo_rule, data, SolverStrategies.STANDARD)
+    response2 = await solver.solve(decisionrules.SolverType.RULEFLOW, compo_rule, data, decisionrules.SolverStrategies.STANDARD)
 ```
 
 # 2 - Management API
 
 Management api is accessible via `ManagementApi` and required management api key that you can obtain in api key section in DecisionRules app.
+
+
 Data for ruleflow import methods are represented as an array where index0 = RF, and index1...indexn are DTs
 
 ```python
@@ -71,7 +75,7 @@ async def management_api_test():
 
     #Or with custom domain
 
-    manager = decisionrules.ManagementApi(mng_key, CustomDomain("YOUR_URL", Protocols.HTTPS))
+    manager = decisionrules.ManagementApi(mng_key, decisionrules.CustomDomain("YOUR_URL", Protocols.HTTPS))
 ```
 
 ## 2.1 Management API usage example
@@ -114,6 +118,6 @@ async def management_api_test():
 * Create Ruleflow - Creates empty rule flow
 * Get Ruleflow - Returns RuleFlow
 * Update RuleFlow - Updates RuleFlow
-* Import RuleFlow - Imports RuleFlow (as a new RuleFLow, as a new version or replace existing version)
-* Export RuleFlow - Exports RuleFlow
+* Import RuleFlow - Imports RuleFlow (as a new RuleFLow, as a new version or replace existing version) and all RelatedDecisionTables (see chapter 2 on how to compose requests)
+* Export RuleFlow - Exports RuleFlow and related DecisionTables
 * Delete RuleFlow - Deletes existing RuleFlow
