@@ -81,8 +81,6 @@ async def management_api_test():
 ## 2.1 Management API usage example
 
 ```python
-from decisionrules import *
-
 async def management_api_test():
     manager = decisionrules.ManagementApi(mng_key)
 
