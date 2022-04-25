@@ -55,7 +55,7 @@ For using custom domain just add `CustomDomain` instance to the `init method` wi
 async def solver_test():
     data = {"say": "Hello from python"}
 
-    solver = decisionrules.SolverAPI(api_key, CustomDomain("YOUR_URL", Protocols.HTTPS))
+    solver = decisionrules.SolverAPI(api_key, decisionrules.CustomDomain("YOUR_URL", decisionrules.Protocols.HTTPS))
     
     response = await solver.solve(decisionrules.SolverType.RULE, get_rule, data, decisionrules.SolverStrategies.STANDARD)
 
@@ -75,7 +75,7 @@ async def management_api_test():
 
     #Or with custom domain
 
-    manager = decisionrules.ManagementApi(mng_key, decisionrules.CustomDomain("YOUR_URL", Protocols.HTTPS))
+    manager = decisionrules.ManagementApi(mng_key, decisionrules.CustomDomain("YOUR_URL", decisionrules.Protocols.HTTPS))
 ```
 
 ## 2.1 Management API usage example
