@@ -35,7 +35,7 @@ class ManagementApi():
         response = None
 
 
-        response = requests.get(get_url, headers=_header)
+        response = await requests.get(get_url, headers=_header)
 
         return response.json()
         
@@ -64,7 +64,7 @@ class ManagementApi():
         response = None
 
         
-        response = requests.post(url, json=data, headers=_header)
+        response = await requests.post(url, json=data, headers=_header)
         return response.json()
 
 
@@ -74,7 +74,7 @@ class ManagementApi():
         response = None
 
         
-        response = requests.put(url, json=data, headers=_header)
+        response = await requests.put(url, json=data, headers=_header)
         return
         
 
@@ -83,7 +83,7 @@ class ManagementApi():
 
         response = None
 
-        requests.delete(url, headers=_header)
+        await requests.delete(url, headers=_header)
         return
 
 
@@ -104,7 +104,7 @@ class ManagementApi():
 
         response = None
 
-        response = requests.post(url,json=data, headers=_header)
+        response = await  requests.post(url,json=data, headers=_header)
         return response.json()
 
 
@@ -113,7 +113,7 @@ class ManagementApi():
 
         response = None
 
-        response = requests.put(url, json=data, headers=_header)
+        response = await requests.put(url, json=data, headers=_header)
         return
 
 
@@ -126,7 +126,7 @@ class ManagementApi():
 
         response = None
 
-        requests.delete(url, headers=_header)
+        await requests.delete(url, headers=_header)
         return
 
 
@@ -151,7 +151,7 @@ class ManagementApi():
 
         response = None
 
-        response = requests.post(url=url, json=data, headers=_header)
+        response = await requests.post(url=url, json=data, headers=_header)
 
         return response.json()
 
@@ -159,6 +159,42 @@ class ManagementApi():
     async def change_rule_status(self, ruleId, status, version):
         url = f"{self.url_factory()}/rule/status/{ruleId}/{status}/{version}"
 
-        requests.put(url=url, headers=_header)
+        response = await requests.put(url=url, headers=_header)
+
+        return response.json()
+
+    async def getItems(self, tags):
+
+        tagsQuery = ",".join(map(str, tags))
+
+        url = f"{self.url_factory()}/tags/items/?tags={tagsQuery}"
+
+        response = await requests.get(url)
+
+        return response.json()
+
+    async def updateTags(self, ruleId, data, version=None):
+        
+        url = ""
+
+        if version is not None:
+            url = f"{self.url_factory()}/tags/{ruleId}"
+        else:
+            url = f"{self.url_factory()}/tags/{ruleId}/{version}"
+
+        response = await requests.patch(url, data=data)
+
+        return response.json()
+
+    async def deleteTags(self, ruleId, version=None):
+
+        url = ""
+
+        if version is not None:
+            url = f"{self.url_factory()}/tags/{ruleId}"
+        else:
+            url = f"{self.url_factory()}/tags/{ruleId}/{version}"
+
+        await requests.delete(url)
 
         return
