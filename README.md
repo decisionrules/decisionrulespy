@@ -103,19 +103,12 @@ async def management_api_test():
     await manager.import_ruleflow([new_ruleflow_with_dt])
     await manager.delele_ruleflow(id)
 
+    await manager.getItems(tags)
+    await manager.updateTags(ruleId, data, version)
+    await manager.delete(ruleId, version)
+
 ```
 
 ## 2.3 All available methods in management API
 
-* GetRuleById - Search for single rule by its ID
-* GetRuleByIdAndVersion - Search for single rule by its ID and version
-* GetSpace - Search for space by its ID
-* PostRuleForSpace - Post new rule to the space
-* PutRule - Update existing rule
-* DeleteRule - Delete existing rule
-* Create Ruleflow - Creates empty rule flow
-* Get Ruleflow - Returns RuleFlow
-* Update RuleFlow - Updates RuleFlow
-* Import RuleFlow - Imports RuleFlow (as a new RuleFLow, as a new version or replace existing version) and all RelatedDecisionTables (see chapter 2 on how to compose requests)
-* Export RuleFlow - Exports RuleFlow and related DecisionTables
-* Delete RuleFlow - Deletes existing RuleFlow
+
