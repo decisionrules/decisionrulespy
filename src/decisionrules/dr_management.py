@@ -58,8 +58,8 @@ class ManagementApi():
 
 
 
-    async def create_rule(self, space_id, data):
-        url = f"{self.url_factory()}/rule/{space_id}"
+    async def create_rule(self, data):
+        url = f"{self.url_factory()}/rule/"
 
         response = None
 
