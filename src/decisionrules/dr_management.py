@@ -35,7 +35,7 @@ class ManagementApi():
         response = None
 
 
-        response = await requests.get(get_url, headers=_header)
+        response =  requests.get(get_url, headers=_header) # await
 
         return response.json()
         
@@ -49,7 +49,10 @@ class ManagementApi():
 
         return await self.get_call(url)
 
+    async def get_all_rules(self):
+        url = f"{self.url_factory()}/space/items"
 
+        return await self.get_call(url)        
 
     async def get_space(self, space_id):
         url = f"{self.url_factory()}/space/{space_id}"
@@ -58,13 +61,13 @@ class ManagementApi():
 
 
 
-    async def create_rule(self, space_id, data):
-        url = f"{self.url_factory()}/rule/{space_id}"
+    async def create_rule(self, data):
+        url = f"{self.url_factory()}/rule/"
 
         response = None
 
         
-        response = await requests.post(url, json=data, headers=_header)
+        response =  requests.post(url, json=data, headers=_header) #await
         return response.json()
 
 
@@ -74,7 +77,7 @@ class ManagementApi():
         response = None
 
         
-        response = await requests.put(url, json=data, headers=_header)
+        response =  requests.put(url, json=data, headers=_header) #await
         return
         
 
@@ -83,7 +86,7 @@ class ManagementApi():
 
         response = None
 
-        await requests.delete(url, headers=_header)
+        requests.delete(url, headers=_header) #await
         return
 
 
@@ -104,7 +107,7 @@ class ManagementApi():
 
         response = None
 
-        response = await  requests.post(url,json=data, headers=_header)
+        response =   requests.post(url,json=data, headers=_header) #await
         return response.json()
 
 
@@ -113,7 +116,7 @@ class ManagementApi():
 
         response = None
 
-        response = await requests.put(url, json=data, headers=_header)
+        response =  requests.put(url, json=data, headers=_header) #await
         return
 
 
@@ -126,7 +129,7 @@ class ManagementApi():
 
         response = None
 
-        await requests.delete(url, headers=_header)
+        requests.delete(url, headers=_header)# await
         return
 
 
@@ -151,7 +154,7 @@ class ManagementApi():
 
         response = None
 
-        response = await requests.post(url=url, json=data, headers=_header)
+        response =  requests.post(url=url, json=data, headers=_header) #await
 
         return response.json()
 
@@ -159,7 +162,7 @@ class ManagementApi():
     async def change_rule_status(self, ruleId, status, version):
         url = f"{self.url_factory()}/rule/status/{ruleId}/{status}/{version}"
 
-        response = await requests.put(url=url, headers=_header)
+        response =  requests.put(url=url, headers=_header) #await
 
         return response.json()
 
@@ -169,7 +172,7 @@ class ManagementApi():
 
         url = f"{self.url_factory()}/tags/items/?tags={tagsQuery}"
 
-        response = await requests.get(url)
+        response =  requests.get(url) #await
 
         return response.json()
 
@@ -182,7 +185,7 @@ class ManagementApi():
         else:
             url = f"{self.url_factory()}/tags/{ruleId}/{version}"
 
-        response = await requests.patch(url, data=data)
+        response =  requests.patch(url, data=data) #await
 
         return response.json()
 
@@ -195,6 +198,6 @@ class ManagementApi():
         else:
             url = f"{self.url_factory()}/tags/{ruleId}/{version}"
 
-        await requests.delete(url)
+        requests.delete(url) #await
 
         return
